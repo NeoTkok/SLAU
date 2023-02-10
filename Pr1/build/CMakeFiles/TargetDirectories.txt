@@ -1,0 +1,3 @@
+/home/neodima/Документы/progi/SLAU/Pr1/build/CMakeFiles/THirdDiagMatrix.dir
+/home/neodima/Документы/progi/SLAU/Pr1/build/CMakeFiles/edit_cache.dir
+/home/neodima/Документы/progi/SLAU/Pr1/build/CMakeFiles/rebuild_cache.dir
