@@ -39,12 +39,10 @@ public:
         for (int i = 1; i < this->n; ++i){
             alpha.push_back(-A[n*2+i]/(A[n+i]+A[i]*alpha[i-1]));
             beta.push_back((A[3*n+i]-A[i]*beta[i-1])/(A[n+i]+A[i]*alpha[i-1]));
-        }
-        std::array<double,10000> x;
-        x[n-1] = beta[n-1];
+        } 
         for (int i = n - 2; i >= 0; --i)
-            x[i] = x[i+1] * alpha[i] + beta[i]; 
+            beta[i] = beta[i+1] * alpha[i] + beta[i]; 
         for (int i = 0; i < n; ++i)
-            std::cout << "x" << i << " = " << x[i] << std::endl;
+            std::cout << "x" << i << " = " << beta[i] << std::endl;
     }
 };
