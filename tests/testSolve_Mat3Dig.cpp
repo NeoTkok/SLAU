@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "ClassMat.cpp"
+#include "Solver_Mat3Dig.hpp"
 #include <iostream>
 
 
@@ -11,9 +11,9 @@ TEST(solver, slae1) {
     std::vector<double> c = {1., 1.};
     std::vector<double> d = {28., 7., 56.};
         
-    Mat3D A(n,a,b,c,d);
+    Mat3D A(n,a,b,c);
 
-    auto x = solve(A);
+    auto x = solve(A,d);
 
     ASSERT_DOUBLE_EQ(x[0], 8.);
     ASSERT_DOUBLE_EQ(x[1], -4.);
@@ -27,9 +27,9 @@ TEST(solver, slae2) {
     std::vector<double> c = {1., 2.};
     std::vector<double> d =  {10., 10., 10.};
     
-    Mat3D A(n,a,b,c,d);
+    Mat3D A(n,a,b,c);
 
-    auto x = solve(A);
+    auto x = solve(A,d);
     ASSERT_DOUBLE_EQ(x[0], 470./553.);
     ASSERT_DOUBLE_EQ(x[1], 360./553.);
     ASSERT_DOUBLE_EQ(x[2], 370./553.);
@@ -42,8 +42,8 @@ TEST(solver, slae3) {
     std::vector<double> c = {2., 1., 2., 5., 1., 1., 50., 30., 0.5};
     std::vector<double> d = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
 
-    Mat3D A(n,a,b,c,d);
-    auto x = solve(A);
+    Mat3D A(n,a,b,c);
+    auto x = solve(A,d);
 
     double x_ref[10] = {362572824060./1551876085453., 355385766055./3103752170906.,
                                     265300269650./1551876085453., -335582640650./1551876085453.,

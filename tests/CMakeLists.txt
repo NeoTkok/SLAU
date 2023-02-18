@@ -8,9 +8,12 @@ add_library(GTest::GTest INTERFACE IMPORTED)
 target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
 
-add_executable(test_3diag test1.cpp)
+add_executable(
+        testSolve_Mat3Diag
+        testSolve_Mat3Dig.cpp)
 
-target_link_libraries(test_3diag PRIVATE
+
+target_link_libraries(
+        testSolve_Mat3Diag PRIVATE
         GTest::GTest
-        ClassMat_lib    
 )
