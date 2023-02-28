@@ -1,6 +1,40 @@
 #include <gtest/gtest.h>
 #include "Solver_Mat3Dig.hpp"
+#include "Class_CSR.hpp"
 #include <iostream>
+
+
+TEST(CLASS_CSR, operator) {
+    std::vector<int> col = {0,1,2,0,1,2,0,1,2};
+    std::vector<int> row = {0,3,6,9};
+    std::vector<double> v = {0,1,2,1,2,3,2,3,4};
+    CSR Matrix(col, row, v);
+    Matrix *= 10;
+    for (int i = 0; i < 3; ++i)
+        for(int j = 0; j < 3; ++j)
+            ASSERT_DOUBLE_EQ(Matrix(i,j), 10*(i+j));
+}
+
+TEST(CLASS_CSR, get){
+    std::vector<int> col = {0,1,3,2,1,3};
+    std::vector<int> row = {0,3,4,6};
+    std::vector<double> v = {1,2,3,4,1,11};
+    CSR Matrix(col, row, v);
+    for(int z = 0; z < 6; ++z)
+        ASSERT_DOUBLE_EQ(Matrix(Matrix.get_i(z),Matrix.get_j(z)), v[z]);
+}
+
+TEST(CLASS_CSR, umn_vect){
+    std::vector<int> col = {0,1,2,0,1,2,0,1,2};
+    std::vector<int> row = {0,3,6,9};
+    std::vector<double> v = {0,1,2,1,2,3,2,3,4};
+    CSR Matrix(col, row, v);
+    std::vector<double> d = {1,2,3};
+    std::vector<double> solve = {8, 14, 20};
+
+    for (int i = 0; i < 3; ++i)
+        ASSERT_DOUBLE_EQ((Matrix*d)[i], solve[i]);
+}
 
 
 

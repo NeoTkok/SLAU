@@ -9,11 +9,11 @@ target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
 
 add_executable(
-        testSolve_Mat3Diag
-        testSolve_Mat3Dig.cpp)
+        TESTs
+        tests.cpp)
 
 
 target_link_libraries(
-        testSolve_Mat3Diag PRIVATE
+        TESTs PRIVATE
         GTest::GTest
 )
