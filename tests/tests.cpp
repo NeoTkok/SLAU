@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
 #include "Solver_Mat3Dig.hpp"
-#include "Class_CSR.hpp"
+#include "Solver_ITR.hpp"
 #include <iostream>
 
 
-TEST(CLASS_CSR, operator) {
+
+TEST(CLASS_CSR, UmnNaSkal) {
     std::vector<int> col = {0,1,2,0,1,2,0,1,2};
     std::vector<int> row = {0,3,6,9};
     std::vector<double> v = {0,1,2,1,2,3,2,3,4};
@@ -24,7 +25,7 @@ TEST(CLASS_CSR, get){
         ASSERT_DOUBLE_EQ(Matrix(Matrix.get_i(z),Matrix.get_j(z)), v[z]);
 }
 
-TEST(CLASS_CSR, umn_vect){
+TEST(CLASS_CSR, UmnNaVect){
     std::vector<int> col = {0,1,2,0,1,2,0,1,2};
     std::vector<int> row = {0,3,6,9};
     std::vector<double> v = {0,1,2,1,2,3,2,3,4};
@@ -36,9 +37,7 @@ TEST(CLASS_CSR, umn_vect){
         ASSERT_DOUBLE_EQ((Matrix*d)[i], solve[i]);
 }
 
-
-
-TEST(solver, slae1) {
+TEST(Mat3Dig, slau1) {
     int n = 3;
     std::vector<double> a = {1., 1.};
     std::vector<double> b = {4., 4., 4.};
@@ -54,7 +53,7 @@ TEST(solver, slae1) {
     ASSERT_DOUBLE_EQ(x[2], 15.);
 }
 
-TEST(solver, slae2) {
+TEST(Mat3Dig, slau2) {
     int n = 3;
     std::vector<double> a =  {1., 2.};
     std::vector<double> b =  {11., 12., 13.};
@@ -69,7 +68,7 @@ TEST(solver, slae2) {
     ASSERT_DOUBLE_EQ(x[2], 370./553.);
 }
 
-TEST(solver, slae3) {
+TEST(Mat3Dig, slau3) {
     int n = 10;
     std::vector<double> a = {1., 3., 6., 2., 3., 11., 10., 1., 1.};
     std::vector<double> b = {3.3, 5.2, 6.37, 12.03, 3., 5.6, 95., 102., 2., 1.};
@@ -87,6 +86,37 @@ TEST(solver, slae3) {
     
     for (std::size_t i = 0; i < 10; ++i) {
         ASSERT_DOUBLE_EQ(x[i], x_ref[i]);
+    }
+}
+
+TEST(CSR, MetProstIter) {
+
+    std::vector<int> col = {0,1,2,0,1,2,0,1,2};
+    std::vector<int> row = {0,3,6,9};
+    std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
+    std::vector<double> b = {1, 2, 3};
+    CSR A(col, row, v);
+
+    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x = {-25/24., 11/12., 53/24.};
+    std::vector<double> x_ref = MPI(A, b, x0, 0.01, 1000);
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
+}
+
+TEST(CSR, Yakobi) {
+    std::vector<int> col = {0,1,2,0,1,2,0,1,2};
+    std::vector<int> row = {0,3,6,9};
+    std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
+    std::vector<double> b = {1, 2, 3};
+    CSR A(col, row, v);
+
+    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x = {-25/24., 11/12., 53/24.};
+    std::vector<double> x_ref = Yakobi(A, b, x0, 1000);
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-5);
     }
 }
 
