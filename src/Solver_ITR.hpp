@@ -3,45 +3,52 @@
 #include <vector>
 #include <cmath>
 
-//сложение и вычетание stl-ных векторов
-std::vector<double> sum_vect(const std::vector<double>& x1, const std::vector<double>& x2){
-    std::vector<double> y(x1.size());
-    for(int i = 0; i < x1.size(); ++i){
-        y[i] = x1[i] + x2[i];
+//сложение stl-ных векторов
+std::vector<double> operator+(const std::vector<double>& a, const std::vector<double> b){
+    std::vector<double> y(a.size());
+    for(int i = 0; i < a.size(); ++i){
+        y[i] = a[i] + b[i];
     }
     return y;
 }
-
-//
-std::vector<double> minus_vect(const std::vector<double>& x1, const std::vector<double>& x2){
-    std::vector<double> y(x1.size());
-    for(int i = 0; i < x1.size(); ++i){
-        y[i] = x1[i] - x2[i];
+//вычетание stl-ных векторов
+std::vector<double> operator-(const std::vector<double>& a, const std::vector<double> b){
+    std::vector<double> y(a.size());
+    for(int i = 0; i < a.size(); ++i){
+        y[i] = a[i] - b[i];
     }
     return y;
 }
 
 // их же произветедие на скаляр
-std::vector<double> compos(const std::vector<double> v, const double a){
-    std::vector<double> V = v;
-    for (int i = 0; i < V.size(); ++i)
-        V[i] *= a;
-    return V;
-} 
+std::vector<double> operator*(const std::vector<double>& v, double b){
+    std::vector<double> y(v.size());
+    for(int i = 0; i < v.size(); ++i){
+        y[i] = v[i]*b;
+    }
+    return y;
+}
+std::vector<double> operator*(double b, const std::vector<double>& v){
+    std::vector<double> y(v.size());
+    for(int i = 0; i < v.size(); ++i){
+        y[i] = v[i]*b;
+    }
+    return y;
+}
 
 // метод Якоби
 std::vector<double> Yakobi(const CSR& MATRIX, const std::vector<double> B, const std::vector<double>& X, int N){
     std::vector<double> interX = X;
     for(int i = 0; i < N; ++i)
-        interX = (MATRIX.D()).obrdiag() * minus_vect(B,MATRIX.LplusU()*interX);
+        interX = (MATRIX.D()).obrdiag() * (B - MATRIX.LplusU()*interX);
     return interX;
 }
 
 // Метод простых итараций
-std::vector<double> MPI(CSR MATRIX, const std::vector<double> B, const std::vector<double>& X, const double t, int N){
+std::vector<double> MPI(const CSR& MATRIX, const std::vector<double> B, const std::vector<double>& X, const double t, int N){
     std::vector<double> interX = X;
     for(int i = 0; i < N; ++i){
-        interX = minus_vect(interX, compos(minus_vect(MATRIX*interX,B),t));
+        interX = interX - (MATRIX*interX - B)*t;
     }
     return interX;
 }
@@ -56,13 +63,13 @@ double ComputeNorm(const std::vector<double>& x) {
 }
 
 // функция для 3 задания
-int NNN(CSR MATRIX, const std::vector<double> B, const std::vector<double>& X, const double t, const std::vector<double>& RESHENIE){
+int NNN(const CSR& MATRIX, const std::vector<double>& B, const std::vector<double>& X, const double t, const std::vector<double>& RESHENIE){
     std::vector<double> interX = X;
     int i = 0;
     for(;;++i){
-        interX = minus_vect(interX, compos(minus_vect(MATRIX*interX,B),t));
-     //   std::cout << ComputeNorm(minus_vect(interX, RESHENIE)) << "\n";
-        if (ComputeNorm(minus_vect(interX, RESHENIE)) < 1e-12)
+        interX = interX - (MATRIX*interX - B)*t;
+     //   std::cout << ComputeNorm(interX - RESHENIE) << "\n";
+        if (ComputeNorm(interX - RESHENIE) < 1e-12)
             break;
     }
     return i;

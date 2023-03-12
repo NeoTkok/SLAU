@@ -9,7 +9,7 @@ TEST(CLASS_CSR, UmnNaSkal) {
     std::vector<int> col = {0,1,2,0,1,2,0,1,2};
     std::vector<int> row = {0,3,6,9};
     std::vector<double> v = {0,1,2,1,2,3,2,3,4};
-    CSR Matrix(col, row, v);
+    CSR Matrix(3,3, col, row, v);
     Matrix *= 10;
     for (int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
@@ -20,7 +20,7 @@ TEST(CLASS_CSR, get){
     std::vector<int> col = {0,1,3,2,1,3};
     std::vector<int> row = {0,3,4,6};
     std::vector<double> v = {1,2,3,4,1,11};
-    CSR Matrix(col, row, v);
+    CSR Matrix(3, 4, col, row, v);
     for(int z = 0; z < 6; ++z)
         ASSERT_DOUBLE_EQ(Matrix(Matrix.get_i(z),Matrix.get_j(z)), v[z]);
 }
@@ -29,7 +29,7 @@ TEST(CLASS_CSR, UmnNaVect){
     std::vector<int> col = {0,1,2,0,1,2,0,1,2};
     std::vector<int> row = {0,3,6,9};
     std::vector<double> v = {0,1,2,1,2,3,2,3,4};
-    CSR Matrix(col, row, v);
+    CSR Matrix(3, 3, col, row, v);
     std::vector<double> d = {1,2,3};
     std::vector<double> solve = {8, 14, 20};
 
@@ -95,7 +95,7 @@ TEST(CSR, MetProstIter) {
     std::vector<int> row = {0,3,6,9};
     std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
     std::vector<double> b = {1, 2, 3};
-    CSR A(col, row, v);
+    CSR A(3, 3, col, row, v);
 
     std::vector<double> x0 = {0., 0., 0.};
     std::vector<double> x = {-25/24., 11/12., 53/24.};
@@ -110,7 +110,7 @@ TEST(CSR, Yakobi) {
     std::vector<int> row = {0,3,6,9};
     std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
     std::vector<double> b = {1, 2, 3};
-    CSR A(col, row, v);
+    CSR A(3,3, col, row, v);
 
     std::vector<double> x0 = {0., 0., 0.};
     std::vector<double> x = {-25/24., 11/12., 53/24.};

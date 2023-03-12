@@ -4,14 +4,14 @@
 
 class CSR{
 private:
-    //const int m;
-    //const int n;
+    const int m;
+    const int n;
     std::vector<int> col = {};
     std::vector<int> row = {} ;
     std::vector<double> val = {};
 public:
-    CSR(const std::vector<int>& COL, const std::vector<int>& ROW,
-        const std::vector<double>& VAL) : val(VAL), col(COL), row(ROW){}
+    CSR(int M, int N, const std::vector<int>& COL, const std::vector<int>& ROW,
+        const std::vector<double>& VAL) : m(M), n(N), val(VAL), col(COL), row(ROW){}
 
     double operator()(int i, int j) const{
         for (int k = row[i]; k < row[i+1]; ++k)
@@ -19,14 +19,6 @@ public:
                 return val[k]; 
         return 0;
     }
-
-    CSR& operator=(const CSR& MAT){
-        col = MAT.col;
-        row = MAT.row;
-        val = MAT.val;
-        return *this;
-    }
-
 
     int get_j (int k) const{
         return col[k];
@@ -40,14 +32,13 @@ public:
         return i-1;
     }
 
-    std::vector<double> operator*(std::vector<double> h){
-        std::vector<double> newCSR(row.size());
-        for(int u = 0; u < row.size(); ++u)
+    const std::vector<double> operator*(const std::vector<double>& h) const{
+        std::vector<double> newCSR(m);
+        for(int u = 0; u < m; ++u)
             for(int k = 0; k < row[u+1]-row[u]; ++k)
                 newCSR[u] += val[k+row[u]]*h[col[k+row[u]]];
         return newCSR;
     }
-
 
     CSR L() const{
         CSR l = *this;
@@ -62,7 +53,7 @@ public:
             if (get_i(k) != get_j(k)) 
                 l.val[k] = 0;
         return l;
-    };
+    }
     CSR U() const{
         CSR l = *this;
         for(int k = 0; k < val.size(); ++k)
@@ -78,7 +69,6 @@ public:
                 l.val[k] = 0;
         return l;
     }
-
 
     CSR obrdiag() const{
     CSR l = *this;
