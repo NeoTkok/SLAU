@@ -1,10 +1,139 @@
 #include <gtest/gtest.h>
 #include "Solver_Mat3Dig.hpp"
 #include "Solver_ITR.hpp"
-#include <iostream>
+#include "alg.hpp"
 
 
 
+TEST(Class_Dense, UmnNaSkal) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {3., 9., 18., 0.};
+
+    Dense A(2,2,a);
+    A *= 3;
+
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(A(i,j), b[i*2+j]);
+}
+
+TEST(Class_Dense, UmnNaSkalCopy) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {3., 9., 18., 0.};
+    Dense A(2,2,a);
+
+    A = A * 3;
+    
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(A(i,j), b[i*2+j]);
+}
+
+TEST(Class_Dense, DELenieNaSkal) {
+
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {3., 9., 18., 0.};
+
+    Dense A(2,2,b);
+
+    A /= 3;
+    
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(A(i,j), a[i*2+j]);
+}
+
+TEST(Class_Dense, DELenieNaSkalCopy) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {3., 9., 18., 0.};
+
+    Dense A(2,2,b);
+    A = A / 3;
+    
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(A(i,j), a[i*2+j]);
+}
+
+TEST(Class_Dense, sum) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {3., 9., 18., 1.};
+    std::vector<double> c = {4., 12., 24., 1.};
+    Dense A(2,2,a);
+    Dense B(2,2,b);
+    A += B;
+    
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(A(i,j), c[i*2+j]);
+}
+
+TEST(Class_Dense, sumCopy) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {3., 9., 18., 1.};
+    std::vector<double> c = {4., 12., 24., 1.};
+    Dense A(2,2,a);
+    Dense B(2,2,b);
+    Dense C = A + B;
+    
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(C(i,j), c[i*2+j]);
+}
+
+TEST(Class_Dense, minus) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {3., 9., 18., 1.};
+    std::vector<double> c = {4., 12., 24., 1.};
+    Dense A(2,2,c);
+    Dense B(2,2,b);
+    A -= B;
+    
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(A(i,j), a[i*2+j]);
+}
+
+TEST(Class_Dense, minusCopy) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {3., 9., 18., 1.};
+    std::vector<double> c = {4., 12., 24., 1.};
+    Dense A(2,2,c);
+    Dense B(2,2,b);
+    Dense C = A - B;
+    
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(C(i,j), a[i*2+j]);
+}
+
+TEST(Class_Dense, umnNaVector) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {1., 2.};
+    std::vector<double> c = {7., 6.};
+    Dense A(2,2,a);
+    std::vector<double> C = A*b;
+    
+    for (int i = 0; i < 2; ++i)
+            ASSERT_DOUBLE_EQ(C[i], c[i]);
+}
+
+TEST(Class_Dense, umn) {
+    std::vector<double> a = {1., 3., 6., 0.};
+    std::vector<double> b = {1., 2., 3., 4., 5., 6.};
+    std::vector<double> c = {13., 17., 21., 6., 12., 18.};
+    Dense A(2,2,a);
+    Dense B(2,3,b);
+    Dense C = A*B;
+    
+    for (int i = 0; i < 2; ++i)
+        for(int j = 0; j < 2; ++j)
+            ASSERT_DOUBLE_EQ(C(i,j), c[i*3+j]);
+}
+
+
+
+//**************************************************************************************
 TEST(CLASS_CSR, UmnNaSkal) {
     std::vector<int> col = {0,1,2,0,1,2,0,1,2};
     std::vector<int> row = {0,3,6,9};
@@ -36,7 +165,7 @@ TEST(CLASS_CSR, UmnNaVect){
     for (int i = 0; i < 3; ++i)
         ASSERT_DOUBLE_EQ((Matrix*d)[i], solve[i]);
 }
-
+//*************************************************************************************
 TEST(Mat3Dig, slau1) {
     int n = 3;
     std::vector<double> a = {1., 1.};
@@ -88,7 +217,7 @@ TEST(Mat3Dig, slau3) {
         ASSERT_DOUBLE_EQ(x[i], x_ref[i]);
     }
 }
-
+//************************************************************************************
 TEST(CSR, MetProstIter) {
 
     std::vector<int> col = {0,1,2,0,1,2,0,1,2};
@@ -119,6 +248,24 @@ TEST(CSR, Yakobi) {
         EXPECT_NEAR(x[i], x_ref[i], 1e-5);
     }
 }
+
+TEST(DENSE, MetProstIter) {
+
+    std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
+    std::vector<double> b = {1, 2, 3};
+    
+    Dense A(3, 3, v);
+
+    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x = {-25/24., 11/12., 53/24.};
+    std::vector<double> x_ref = MPI(A, b, x0, 0.01, 1000);
+    
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
+}
+
+
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

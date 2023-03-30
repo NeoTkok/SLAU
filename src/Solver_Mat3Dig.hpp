@@ -1,3 +1,7 @@
+#ifndef SLAE_MAT3DIG_HPP
+#define SLAE_MAT3DIG_HPP
+
+
 #include "Class_Mat3Dig.hpp"
 
 std::vector<double> solve(const Mat3D& MatSol, const std::vector<double>& d) {
@@ -56,3 +60,5 @@ std::ostream& operator<<(std::ostream& os, const std::vector<double>& ShowV){
 }
 
 */
+
+#endif 

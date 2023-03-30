@@ -1,5 +1,7 @@
+#ifndef SLAE_CLASS_3DIAG_HPP
+#define SLAE_CLASS_3DIAG_HPP
+
 #include <vector>
-#include <iostream>
 
 class Mat3D{
 private:
@@ -28,3 +30,4 @@ public:
 
 };
 
+#endif 

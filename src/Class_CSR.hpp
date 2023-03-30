@@ -1,6 +1,9 @@
-#include <iostream>
-#include <vector>
+#ifndef CSR_HPP
+#define CSR_HPP
 
+
+
+#include <vector>
 
 class CSR{
 private:
@@ -85,3 +88,5 @@ public:
         return *this; 
     }
 };
+
+#endif 
