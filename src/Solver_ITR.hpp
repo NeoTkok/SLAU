@@ -8,7 +8,7 @@
 #include "Class_Dense.hpp"
 
 // метод Якоби
-std::vector<double> Yakobi(const CSR& MATRIX, const std::vector<double> B, const std::vector<double>& X, int N){
+std::vector<double> Yakobi(const CSR& MATRIX, const std::vector<double>& B, const std::vector<double>& X, int N){
     std::vector<double> interX = X;
     for(int i = 0; i < N; ++i)
         interX = (MATRIX.D()).obrdiag() * (B - MATRIX.LplusU()*interX);
@@ -18,7 +18,7 @@ std::vector<double> Yakobi(const CSR& MATRIX, const std::vector<double> B, const
 
 
 // Метод простых итараций
-std::vector<double> MPI(const CSR& MATRIX, const std::vector<double> B, const std::vector<double>& X, const double t, int N){
+std::vector<double> MPI(const CSR& MATRIX, const std::vector<double>& B, const std::vector<double>& X, const double t, int N){
     std::vector<double> interX = X;
     for(int i = 0; i < N; ++i){
         interX = interX - (MATRIX*interX - B)*t;
@@ -26,7 +26,7 @@ std::vector<double> MPI(const CSR& MATRIX, const std::vector<double> B, const st
     return interX;
 }
 
-std::vector<double> MPI(const Dense& MATRIX, const std::vector<double> B, const std::vector<double>& X, const double t, int N){
+std::vector<double> MPI(const Dense& MATRIX, const std::vector<double>& B, const std::vector<double>& X, const double t, int N){
     std::vector<double> interX = X;
     for(int i = 0; i < N; ++i){
         interX = interX - (MATRIX*interX - B)*t;

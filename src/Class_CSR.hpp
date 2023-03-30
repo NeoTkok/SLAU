@@ -35,7 +35,7 @@ public:
         return i-1;
     }
 
-    const std::vector<double> operator*(const std::vector<double>& h) const{
+    std::vector<double> operator*(const std::vector<double>& h) const{
         std::vector<double> newCSR(m);
         for(int u = 0; u < m; ++u)
             for(int k = 0; k < row[u+1]-row[u]; ++k)
