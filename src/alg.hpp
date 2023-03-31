@@ -39,6 +39,15 @@ std::vector<double> operator*(double b, const std::vector<double>& v){
     return y;
 }
 
+
+double operator*(const std::vector<double> x1, const std::vector<double>& x2){
+    double x = 0;
+    for(int i = 0; i < x1.size(); ++i)
+        x += x1[i]*x2[i];
+    return x;
+}
+
+
 std::vector<double> operator/(const std::vector<double>& v, double b){
     std::vector<double> y(v.size());
     for(int i = 0; i < v.size(); ++i){

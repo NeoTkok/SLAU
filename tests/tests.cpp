@@ -265,6 +265,22 @@ TEST(DENSE, MetProstIter) {
     }
 }
 
+TEST(DENSE, MetGAUSZEY) {
+
+    std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
+    std::vector<double> b = {1, 2, 3};
+    
+    Dense A(3, 3, v);
+
+    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x = {-25/24., 11/12., 53/24.};
+    std::vector<double> x_ref = GausZ(A, b, x0, 100);
+    
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
+}
+
 
 
 int main(int argc, char** argv) {
