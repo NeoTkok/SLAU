@@ -234,6 +234,41 @@ TEST(CSR, MetProstIter) {
     }
 }
 
+TEST(CSR, MetProstIterVsCheb) {
+
+    std::vector<int> col = {0,1,0,1};
+    std::vector<int> row = {0,2,4};
+    std::vector<double> v = {9, -3, -3, 9};
+    std::vector<double> b = {1, 12};
+    CSR A(2, 2, col, row, v);
+
+    std::vector<double> x0 = {0., 0.};
+    std::vector<double> x = {5/8., 37/24.};
+    std::vector<double> x_ref = MPI(A, b, x0, 0.01, 100);
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-2);
+    }
+}
+
+TEST(CSR, MetProstIter_cheb ) {
+
+    std::vector<int> col = {0,1,0,1};
+    std::vector<int> row = {0,2,4};
+    std::vector<double> v = {9, -3, -3, 9};
+    std::vector<double> b = {1, 12};
+    CSR A(2, 2, col, row, v);
+
+    std::vector<double> x0 = {0., 0.};
+    std::vector<double> x = {5/8., 37/24.};
+    std::vector<double> x_ref = MPI_Cheb(6., 12., A, b, x0);
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-6);
+    }
+}
+
+
+
+
 TEST(CSR, Yakobi) {
     std::vector<int> col = {0,1,2,0,1,2,0,1,2};
     std::vector<int> row = {0,3,6,9};
@@ -248,6 +283,7 @@ TEST(CSR, Yakobi) {
         EXPECT_NEAR(x[i], x_ref[i], 1e-5);
     }
 }
+
 
 TEST(DENSE, MetProstIter) {
 
