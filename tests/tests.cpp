@@ -317,6 +317,30 @@ TEST(DENSE, MetGAUSZEY) {
     }
 }
 
+TEST(DENSE, Grad) {
+
+    std::vector<double> v = {10, 0, 0, 1};
+    std::vector<double> b = {1, 2};
+    
+    Dense A(2, 2, v);
+
+    std::vector<double> x0 = {12341., 53430.};
+    
+    EXPECT_NEAR(f_grad(A,b,x0, 1e-5),-41/20. , 1e-5);
+
+}
+
+TEST(CSR, Grad) {
+    std::vector<int> col = {0,1};
+    std::vector<int> row = {0,1,2};
+    std::vector<double> v = {10, 1};
+    std::vector<double> b = {1, 2};
+    CSR A(2,2, col, row, v);
+
+    std::vector<double> x0 = {1231., 0.43};
+
+    EXPECT_NEAR(f_grad(A,b,x0, 1e-6),-41/20. , 1e-5);
+}
 
 
 int main(int argc, char** argv) {

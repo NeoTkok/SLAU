@@ -103,4 +103,58 @@ std::vector<double> GausZ(const Dense& MATRIX, const std::vector<double>& B, con
     return interX;
 }
 
+// градиентный спуск
+
+double f_grad(const Dense& A, const std::vector<double>& b, const std::vector<double>& x0, double eps){
+    std::vector<double> x = x0;
+    std::vector<double> y = x0;
+    std::vector<double> Xpred = x0;
+    std::vector<double> r = A * x - b;
+    std::vector<double> delta = x0;
+    double alpha = (r*r)/(r*(A*r));
+    double beta = 0;
+    for (int i = 0; Norma(r) > eps; ++i){
+        x = y - alpha * (r);
+        delta = x - Xpred;
+        r = A * x - b;
+        beta = (alpha * r * (A*r) - r*r) / (delta*(A*r));
+        y = x + beta * delta;
+        alpha = (beta*delta*(A*r) + r*r) / (r*(A*r));
+        Xpred = x;
+    }
+
+    return x*(A*x)/2 - b*x;
+}
+
+double f_grad(const CSR& A, const std::vector<double>& b, const std::vector<double>& x0, double eps){
+    std::vector<double> x = x0;
+    std::vector<double> y = x0;
+    std::vector<double> Xpred = x0;
+    std::vector<double> r = A * x - b;
+    std::vector<double> delta = x0;
+    double alpha = (r*r)/(r*(A*r));
+    double beta = 0;
+    for (int i = 0; Norma(r) > eps; ++i){
+        x = y - alpha * (r);
+        delta = x - Xpred;
+        r = A * x - b;
+        beta = (alpha * r * (A*r) - r*r) / (delta*(A*r));
+        y = x + beta * delta;
+        alpha = (beta*delta*(A*r) + r*r) / (r*(A*r));
+        Xpred = x;
+    }
+
+    return x*(A*x)/2 - b*x;
+}
+
+
+
+
+
+
+
+
+
+
+
 #endif // SLAE_ITR_HPP
