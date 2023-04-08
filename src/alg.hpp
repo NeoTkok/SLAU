@@ -57,10 +57,11 @@ std::vector<double> operator/(const std::vector<double>& v, double b){
 }
 // норма вектора
 double Norma(const std::vector<double>& x) {
-    double result = 0.0;
-    for (int i = 0; i < x.size();++i) {
-        result += x[i]*x[i];
+    double result = abs(x[0]);
+    for (int i = 0; i < x.size(); ++i) {
+        if (result < abs(x[i]))
+            result = abs(x[i]);
     }
-    return sqrt(result);
+    return result;
 }
 #endif 

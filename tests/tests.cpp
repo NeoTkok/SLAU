@@ -4,7 +4,6 @@
 #include "alg.hpp"
 
 
-
 TEST(Class_Dense, UmnNaSkal) {
     std::vector<double> a = {1., 3., 6., 0.};
     std::vector<double> b = {3., 9., 18., 0.};
@@ -226,27 +225,11 @@ TEST(CSR, MetProstIter) {
     std::vector<double> b = {1, 2, 3};
     CSR A(3, 3, col, row, v);
 
-    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x0 = {0.12, 310., 430.};
     std::vector<double> x = {-25/24., 11/12., 53/24.};
-    std::vector<double> x_ref = MPI(A, b, x0, 0.01, 1000);
+    std::vector<double> x_ref = MPI(A, b, x0, 0.01, 1e-13);
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
-    }
-}
-
-TEST(CSR, MetProstIterVsCheb) {
-
-    std::vector<int> col = {0,1,0,1};
-    std::vector<int> row = {0,2,4};
-    std::vector<double> v = {9, -3, -3, 9};
-    std::vector<double> b = {1, 12};
-    CSR A(2, 2, col, row, v);
-
-    std::vector<double> x0 = {0., 0.};
-    std::vector<double> x = {5/8., 37/24.};
-    std::vector<double> x_ref = MPI(A, b, x0, 0.01, 100);
-    for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-2);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -258,16 +241,13 @@ TEST(CSR, MetProstIter_cheb ) {
     std::vector<double> b = {1, 12};
     CSR A(2, 2, col, row, v);
 
-    std::vector<double> x0 = {0., 0.};
+    std::vector<double> x0 = {1230., 0.2325};
     std::vector<double> x = {5/8., 37/24.};
-    std::vector<double> x_ref = MPI_Cheb(6., 12., A, b, x0);
+    std::vector<double> x_ref = MPI_Cheb(6., 12., A, b, x0, 1e-25);
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-6);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-25);
     }
 }
-
-
-
 
 TEST(CSR, Yakobi) {
     std::vector<int> col = {0,1,2,0,1,2,0,1,2};
@@ -292,12 +272,12 @@ TEST(DENSE, MetProstIter) {
     
     Dense A(3, 3, v);
 
-    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x0 = {0.456, 0.23, 120.};
     std::vector<double> x = {-25/24., 11/12., 53/24.};
-    std::vector<double> x_ref = MPI(A, b, x0, 0.01, 1000);
+    std::vector<double> x_ref = MPI(A, b, x0, 0.01, 1e-13);
     
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -308,12 +288,12 @@ TEST(DENSE, MetGAUSZEY) {
     
     Dense A(3, 3, v);
 
-    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x0 = {0.2, 230., 0.12};
     std::vector<double> x = {-25/24., 11/12., 53/24.};
-    std::vector<double> x_ref = GausZ(A, b, x0, 100);
+    std::vector<double> x_ref = GausZ(A, b, x0, 1e-13);
     
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -326,10 +306,10 @@ TEST(DENSE, GausSIM) {
 
     std::vector<double> x0 = {0., 0., 0.};
     std::vector<double> x = {-25/24., 11/12., 53/24.};
-    std::vector<double> x_ref = Gaus_SIM(A, b, x0, 100);
+    std::vector<double> x_ref = Gaus_SIM(A, b, x0, 1e-15);
     
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-14);
     }
 }
 
@@ -340,12 +320,12 @@ TEST(DENSE, SOR) {
     
     Dense A(3, 3, v);
 
-    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x0 = {0.2, 320., 0.12};
     std::vector<double> x = {-25/24., 11/12., 53/24.};
-    std::vector<double> x_ref = SOR(A, b, x0, 100, 0.5);
+    std::vector<double> x_ref = SOR(A, b, x0, 1e-15, 0.5);
     
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-15);
     }
 }
 
@@ -358,10 +338,10 @@ TEST(DENSE, SG) {
 
     std::vector<double> x0 = {0.3523, 23534.};
     std::vector<double> x = {0.1, 2};
-    std::vector<double> x_ref = SG(A, b, x0);
+    std::vector<double> x_ref = SG(A, b, x0,1e-15);
     
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-15);
     }
 }
 
@@ -374,10 +354,10 @@ TEST(CSR, SG) {
 
     std::vector<double> x0 = {0.3523, 23534.};
     std::vector<double> x = {0.1, 2};
-    std::vector<double> x_ref = SG(A, b, x0);
+    std::vector<double> x_ref = SG(A, b, x0,1e-15);
     
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-15);
     }
 }
 
@@ -389,10 +369,10 @@ TEST(DENSE, Grad) {
 
     std::vector<double> x0 = {0.1, 0.2};
     std::vector<double> x = {0.1, 2.};
-    std::vector<double> x_ref = f_grad(A, b, x0,1e-5);
+    std::vector<double> x_ref = f_grad(A, b, x0,1e-24);
     
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-24);
     }
 }
 
@@ -405,12 +385,17 @@ TEST(CSR, Grad) {
 
     std::vector<double> x0 = {230.1, 10.};
     std::vector<double> x = {0.1, 2};
-    std::vector<double> x_ref = f_grad(A, b, x0,1e-5);
+    std::vector<double> x_ref = f_grad(A, b, x0,1e-25);
 
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+        EXPECT_NEAR(x[i], x_ref[i], 1e-24);
     }
 }
+
+
+
+
+
 
 
 int main(int argc, char** argv) {
