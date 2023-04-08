@@ -45,47 +45,46 @@ std::vector<double> MPI_Cheb(double L_min, double L_max, const CSR& MATRIX,
     double p = (L_min + L_max)/2; 
     double q = (L_max - L_min)/2;
     
-    std::vector<double> interX = X;
+    std::vector<double> iterX = X;
 
     for (int i = 0; i < N; ++i)
-        interX = interX - 1/(p+q*Chebyshev[Razbros[i]]) * (MATRIX*interX - B);
+        iterX = iterX - 1/(p+q*Chebyshev[Razbros[i]]) * (MATRIX*iterX - B);
 
-    return interX;
+    return iterX;
 }
 
 // метод Якоби
 std::vector<double> Yakobi(const CSR& MATRIX, const std::vector<double>& B, const std::vector<double>& X, int n){
-    std::vector<double> interX = X;
+    std::vector<double> iterX = X;
     CSR LU = MATRIX.LplusU();
     CSR obrD = MATRIX.D().obrdiag();
     for(int i = 0; i < n; ++i)
-        interX = obrD * (B - LU*interX);
-    return interX;
+        iterX = obrD * (B - LU*iterX);
+    return iterX;
 }
 
 // Методы простых итараций
 std::vector<double> MPI(const CSR& MATRIX, const std::vector<double>& B, const std::vector<double>& X, const double t, int n){
-    std::vector<double> interX = X;
+    std::vector<double> iterX = X;
     for(int i = 0; i < n; ++i){
-        interX = interX - (MATRIX*interX - B)*t;
+        iterX = iterX - (MATRIX*iterX - B)*t;
     }
-    return interX;
+    return iterX;
 }
 
 std::vector<double> MPI(const Dense& MATRIX, const std::vector<double>& B, const std::vector<double>& X, const double t, int n){
-    std::vector<double> interX = X;
-    for(int i = 0; i < n; ++i){
-        interX = interX - (MATRIX*interX - B)*t;
-    }
-    return interX;
+    std::vector<double> iterX = X;
+    for(int i = 0; i < n; ++i)
+        iterX = iterX - (MATRIX*iterX - B)*t;
+    return iterX;
 }
 
 // Гаусс Зейдель*************************************************************************************
 std::vector<double> GausZ(const Dense& MATRIX, const std::vector<double>& B, const std::vector<double>& X, int N){
-    std::vector<double> interX = X;
+    std::vector<double> iterX = X;
     for (int i = 0; i < N; ++i){
 
-        std::vector<double> y = interX;
+        std::vector<double> y = iterX;
         for(int k = 0; k < MATRIX.get_M(); ++k){
             if (MATRIX(k,k) != 0)
                 {
@@ -96,16 +95,16 @@ std::vector<double> GausZ(const Dense& MATRIX, const std::vector<double>& B, con
             for(int j = k+1; j < Uk.size(); ++j)
                 Uk[j] = MATRIX(k,j);
         
-            interX[k] = (B[k]-Uk*y - Lk*interX)/MATRIX(k,k);            
+            iterX[k] = (B[k]-Uk*y - Lk*iterX)/MATRIX(k,k);            
                 }
         }
     }
-    return interX;
+    return iterX;
 }
 
 // градиентный спуск
 
-double f_grad(const Dense& A, const std::vector<double>& b, const std::vector<double>& x0, double eps){
+std::vector<double> f_grad(const Dense& A, const std::vector<double>& b, const std::vector<double>& x0, double eps){
     std::vector<double> x = x0;
     std::vector<double> y = x0;
     std::vector<double> Xpred = x0;
@@ -123,10 +122,10 @@ double f_grad(const Dense& A, const std::vector<double>& b, const std::vector<do
         Xpred = x;
     }
 
-    return x*(A*x)/2 - b*x;
+    return x;
 }
 
-double f_grad(const CSR& A, const std::vector<double>& b, const std::vector<double>& x0, double eps){
+std::vector<double> f_grad(const CSR& A, const std::vector<double>& b, const std::vector<double>& x0, double eps){
     std::vector<double> x = x0;
     std::vector<double> y = x0;
     std::vector<double> Xpred = x0;
@@ -144,16 +143,106 @@ double f_grad(const CSR& A, const std::vector<double>& b, const std::vector<doub
         Xpred = x;
     }
 
-    return x*(A*x)/2 - b*x;
+    return x;
 }
 
+// симметризованный ГЗ
 
+std::vector<double> Gaus_SIM(const Dense& MATRIX, const std::vector<double>& B, const std::vector<double>& X, int N){
+    std::vector<double> iterX = X;
+    for (int i = 0; i < N; ++i){
 
+        std::vector<double> y = iterX;
+        for(int k = 0; k < MATRIX.get_M(); ++k){
+            std::vector<double> Uk(MATRIX.get_N()); // N = M
+            std::vector<double> Lk(MATRIX.get_M());
+            for(int j = 0; j < k; ++j)
+                Lk[j] = MATRIX(k,j);
+            for(int j = k+1; j < Uk.size(); ++j)
+                Uk[j] = MATRIX(k,j);
+        
+            iterX[k] = (B[k]-Uk*y - Lk*iterX)/MATRIX(k,k);            
+        }
 
+        for(int k = MATRIX.get_M() - 1; k >= 0 ; --k){
+            std::vector<double> Uk(MATRIX.get_N()); // N = M
+            std::vector<double> Lk(MATRIX.get_M());
+            for(int j = 0; j < k; ++j)
+                Lk[j] = MATRIX(k,j);
+            for(int j = k+1; j < Uk.size(); ++j)
+                Uk[j] = MATRIX(k,j);
 
+            iterX[k] = (B[k]-Lk*y - Uk*iterX)/MATRIX(k,k);            
+        }
+    }
+    return iterX;
+}
 
+std::vector<double> SOR(const Dense& MATRIX, const std::vector<double>& B, const std::vector<double>& X, int N, double omega){
+    std::vector<double> iterX = X;
+    for (int i = 0; i < N; ++i){
 
+        std::vector<double> y = iterX;
+        for(int k = 0; k < MATRIX.get_M(); ++k){
+            if (MATRIX(k,k) != 0)
+                {
+            std::vector<double> Uk(MATRIX.get_N()); // N = M
+            std::vector<double> Lk(MATRIX.get_M());
+            for(int j = 0; j < k; ++j)
+                Lk[j] = MATRIX(k,j);
+            for(int j = k+1; j < Uk.size(); ++j)
+                Uk[j] = MATRIX(k,j);
+        
+            iterX[k] = (1-omega)*iterX[k] + omega*(B[k]-Uk*y - Lk*iterX)/MATRIX(k,k);            
+                }
+        }
+    }
+    return iterX;
+}
 
+std::vector<double> SG(const Dense& A, const std::vector<double>& B, const std::vector<double>& X){
+    std::vector<double> x = X;
+    std::vector<double> r = A*X-B;
+    std::vector<double> Rpred = r;
+    std::vector<double> d = r;
+    double alpha = (r*r)/(d*(A*d));
+    double beta = 0;
+    for (int i = 0; i < B.size()/* i < A.get_M*/; ++i){
+        alpha = (r*r)/(d*(A*d));
+        x = x - alpha * d;
+        Rpred = r;
+        r = A*x - B;
+        if (Norma(d) == 0)
+            break;
+        else{
+            beta = (r*r)/(Rpred*Rpred); 
+            d = r + beta * d; 
+        }
+    }
+    return x;
+}
+
+std::vector<double> SG(const CSR& A, const std::vector<double>& B, const std::vector<double>& X){
+    std::vector<double> x = X;
+    std::vector<double> r = A*X-B;
+    std::vector<double> Rpred = r;
+    std::vector<double> d = r;
+    double alpha = (r*r)/(d*(A*d));
+    double beta = 0;
+    for (int i = 0; i < B.size()/* i < A.get_M*/; ++i){
+        alpha = (r*r)/(d*(A*d));
+        x = x - alpha * d;
+        Rpred = r;
+        r = A*x - B;
+        if (Norma(d) == 0)
+            break;
+        else{
+            beta = (r*r)/(Rpred*Rpred); 
+            d = r + beta * d; 
+        }
+    }
+    return x;
+}
 
 
 

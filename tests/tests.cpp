@@ -317,17 +317,83 @@ TEST(DENSE, MetGAUSZEY) {
     }
 }
 
-TEST(DENSE, Grad) {
+TEST(DENSE, GausSIM) {
 
+    std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
+    std::vector<double> b = {1, 2, 3};
+    
+    Dense A(3, 3, v);
+
+    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x = {-25/24., 11/12., 53/24.};
+    std::vector<double> x_ref = Gaus_SIM(A, b, x0, 100);
+    
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
+}
+
+TEST(DENSE, SOR) {
+
+    std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
+    std::vector<double> b = {1, 2, 3};
+    
+    Dense A(3, 3, v);
+
+    std::vector<double> x0 = {0., 0., 0.};
+    std::vector<double> x = {-25/24., 11/12., 53/24.};
+    std::vector<double> x_ref = SOR(A, b, x0, 100, 0.5);
+    
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
+}
+
+TEST(DENSE, SG) {
+    
     std::vector<double> v = {10, 0, 0, 1};
     std::vector<double> b = {1, 2};
     
     Dense A(2, 2, v);
 
-    std::vector<double> x0 = {12341., 53430.};
+    std::vector<double> x0 = {0.3523, 23534.};
+    std::vector<double> x = {0.1, 2};
+    std::vector<double> x_ref = SG(A, b, x0);
     
-    EXPECT_NEAR(f_grad(A,b,x0, 1e-5),-41/20. , 1e-5);
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
+}
 
+TEST(CSR, SG) {
+    std::vector<int> col = {0,1};
+    std::vector<int> row = {0,1,2};
+    std::vector<double> v = {10, 1};
+    std::vector<double> b = {1, 2};
+    CSR A(2,2, col, row, v);
+
+    std::vector<double> x0 = {0.3523, 23534.};
+    std::vector<double> x = {0.1, 2};
+    std::vector<double> x_ref = SG(A, b, x0);
+    
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
+}
+
+TEST(DENSE, Grad) {
+    std::vector<double> v = {10, 0, 0, 1};
+    std::vector<double> b = {1, 2};
+    
+    Dense A(2, 2, v);
+
+    std::vector<double> x0 = {0.1, 0.2};
+    std::vector<double> x = {0.1, 2.};
+    std::vector<double> x_ref = f_grad(A, b, x0,1e-5);
+    
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
 }
 
 TEST(CSR, Grad) {
@@ -337,9 +403,13 @@ TEST(CSR, Grad) {
     std::vector<double> b = {1, 2};
     CSR A(2,2, col, row, v);
 
-    std::vector<double> x0 = {1231., 0.43};
+    std::vector<double> x0 = {230.1, 10.};
+    std::vector<double> x = {0.1, 2};
+    std::vector<double> x_ref = f_grad(A, b, x0,1e-5);
 
-    EXPECT_NEAR(f_grad(A,b,x0, 1e-6),-41/20. , 1e-5);
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-4);
+    }
 }
 
 
