@@ -1,3 +1,6 @@
+#ifndef SLAE_TESTs_CPP
+#define SLAE_TESTS_CPP
+
 #include <gtest/gtest.h>
 #include "Solver_Mat3Dig.hpp"
 #include "Solver_ITR.hpp"
@@ -264,6 +267,51 @@ TEST(CSR, Yakobi) {
     }
 }
 
+TEST(CSR, Gauss_Seidel) {
+    std::vector<int> col = {0,1,0,1};
+    std::vector<int> row = {0,2,4};
+    std::vector<double> v = {9, -3, -3, 9};
+    std::vector<double> b = {1, 12};
+    CSR A(2, 2, col, row, v);
+
+    std::vector<double> x0 = {1230., 0.2325};
+    std::vector<double> x = {5/8., 37/24.};
+    std::vector<double> x_ref = Gauss_Seidel(A, b, x0, 1e-13);
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+    }
+}
+
+TEST(CSR, SOR) {
+    std::vector<int> col = {0,1,0,1};
+    std::vector<int> row = {0,2,4};
+    std::vector<double> v = {9, -3, -3, 9};
+    std::vector<double> b = {1, 12};
+    CSR A(2, 2, col, row, v);
+
+    std::vector<double> x0 = {1230., 0.2325};
+    std::vector<double> x = {5/8., 37/24.};
+    std::vector<double> x_ref = SOR(A, b, x0, 1e-13, 0.5);
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+    }
+}
+
+TEST(CSR, GausSIM) {
+    std::vector<int> col = {0,1,0,1};
+    std::vector<int> row = {0,2,4};
+    std::vector<double> v = {9, -3, -3, 9};
+    std::vector<double> b = {1, 12};
+    CSR A(2, 2, col, row, v);
+
+    std::vector<double> x0 = {1230., 0.2325};
+    std::vector<double> x = {5/8., 37/24.};
+    std::vector<double> x_ref = Gaus_SIM(A, b, x0, 1e-13);
+    for (std::size_t i = 0; i < 2; ++i) {
+        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+    }
+}
+
 
 TEST(DENSE, MetProstIter) {
 
@@ -281,7 +329,7 @@ TEST(DENSE, MetProstIter) {
     }
 }
 
-TEST(DENSE, MetGAUSZEY) {
+TEST(DENSE, Gauss_Seidel) {
 
     std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
     std::vector<double> b = {1, 2, 3};
@@ -290,7 +338,7 @@ TEST(DENSE, MetGAUSZEY) {
 
     std::vector<double> x0 = {0.2, 230., 0.12};
     std::vector<double> x = {-25/24., 11/12., 53/24.};
-    std::vector<double> x_ref = GausZ(A, b, x0, 1e-13);
+    std::vector<double> x_ref = Gauss_Seidel(A, b, x0, 1e-13);
     
     for (std::size_t i = 0; i < 3; ++i) {
         EXPECT_NEAR(x[i], x_ref[i], 1e-13);
@@ -395,7 +443,7 @@ TEST(CSR, Grad) {
 
 
 // ДЛя тестирования самостоялки....
-/* 
+/*
 
 #include <iostream>
 #include <fstream>
@@ -455,9 +503,6 @@ TEST(CSR, MetProstIterSAM) {
     
     std::vector<double> x0(n);
 
- 
-
-    std::vector<double> x_mpicheb = MPI_Cheb(l_min,l_max,A,B, x0, 1e-1);
     
 
 
@@ -465,10 +510,10 @@ TEST(CSR, MetProstIterSAM) {
     out.open("hello.txt");      // открываем файл для записи
 
 
- 
-    for(double i = l_max-10; i < l_max+10; i+=0.1){   
-        //int z = MPI_ChebN2(l_min,i,A,B,x0,1e-15);
-        out  << i-l_min << ", ";
+    std::vector<double> z = Gaus_SIMn(A, B, x0, 1e-15);
+
+    for(int i = 0; i < z.size(); ++i){   
+        out  << z[i] << ", ";
     }
     std::cout<<std::endl;
 
@@ -483,3 +528,5 @@ int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
+
+#endif

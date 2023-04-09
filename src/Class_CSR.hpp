@@ -23,6 +23,14 @@ public:
         return 0;
     }
 
+    int get_M() const{
+        return m;
+    }
+
+    int get_N() const{
+        return n;
+    }
+
     int get_j (int k) const{
         return col[k];
     }
