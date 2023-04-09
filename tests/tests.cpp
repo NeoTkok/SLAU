@@ -329,7 +329,7 @@ TEST(DENSE, SOR) {
     }
 }
 
-TEST(DENSE, SG) {
+TEST(DENSE, CG) {
     
     std::vector<double> v = {10, 0, 0, 1};
     std::vector<double> b = {1, 2};
@@ -338,14 +338,14 @@ TEST(DENSE, SG) {
 
     std::vector<double> x0 = {0.3523, 23534.};
     std::vector<double> x = {0.1, 2};
-    std::vector<double> x_ref = SG(A, b, x0,1e-15);
+    std::vector<double> x_ref = CG(A, b, x0,1e-15);
     
     for (std::size_t i = 0; i < 2; ++i) {
         EXPECT_NEAR(x[i], x_ref[i], 1e-15);
     }
 }
 
-TEST(CSR, SG) {
+TEST(CSR, CG) {
     std::vector<int> col = {0,1};
     std::vector<int> row = {0,1,2};
     std::vector<double> v = {10, 1};
@@ -354,7 +354,7 @@ TEST(CSR, SG) {
 
     std::vector<double> x0 = {0.3523, 23534.};
     std::vector<double> x = {0.1, 2};
-    std::vector<double> x_ref = SG(A, b, x0,1e-15);
+    std::vector<double> x_ref = CG(A, b, x0,1e-15);
     
     for (std::size_t i = 0; i < 2; ++i) {
         EXPECT_NEAR(x[i], x_ref[i], 1e-15);
@@ -394,9 +394,90 @@ TEST(CSR, Grad) {
 
 
 
+// ДЛя тестирования самостоялки....
+/* 
+
+#include <iostream>
+#include <fstream>
+
+TEST(CSR, MetProstIterSAM) {
+    int n = 289;
+    std::vector<int> col(n + 2*n-2 + 2 * (n-17));
+    std::vector<int> row(n+1); //
+    std::vector<double> v(n + 2*n-2 + 2 * (n-17)); //
+    std::vector<double> B(n);
+    double a = 12;
+    double b = 28;
+    int k = 0;
+    for(int i = 0; i < n; ++i){
+        B[i] = 1;
+        for(int j = 0; j < n; ++j){
+            if (i-17 == j){
+                v[k] = a; 
+                col[k] = j; 
+                ++k;
+                //std::cout << ".12.";
+            }
+            if (i-1 == j){
+                v[k] = a; 
+                col[k] = j; 
+                ++k;
+                //std::cout << ".12.";
+            }
+            if (i == j){
+                v[k] = 2*b; 
+                col[k] = j; 
+                ++k;
+                //std::cout << ".36.";
+            }
+            if (i+1 == j){
+                v[k] = a;
+                col[k] = j; 
+                ++k;
+                //std::cout << ".12.";
+            }
+            if (i+17 == j){
+                v[k] = a; 
+                col[k] = j; 
+                ++k;
+                //std::cout << ".12.";
+            }
+            //if (i+17 != j && i+1 != j && i != j && i-1 != j && i-17 != j)
+                //std::cout << ".0.";
+        }
+        row[i+1] = k;
+        //std::cout<< std::endl;
+    }
+    double l_max = (b+2*a*cos(M_PI/(n+1)))+(b+2*a*cos(M_PI/(n+1)));
+    double l_min = (b+2*a*cos(M_PI*n/(n+1)))+(b+2*a*cos(M_PI*n/(n+1)));
+    std::cout<< l_max << "  " << l_min << std::endl;
+    CSR A(n, n, col, row, v);
+    
+    std::vector<double> x0(n);
+
+ 
+
+    std::vector<double> x_mpicheb = MPI_Cheb(l_min,l_max,A,B, x0, 1e-1);
+    
+
+
+    std::ofstream out;          // поток для записи
+    out.open("hello.txt");      // открываем файл для записи
+
+
+ 
+    for(double i = l_max-10; i < l_max+10; i+=0.1){   
+        //int z = MPI_ChebN2(l_min,i,A,B,x0,1e-15);
+        out  << i-l_min << ", ";
+    }
+    std::cout<<std::endl;
+
+    out.close(); 
 
 
 
+}  
+ */
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

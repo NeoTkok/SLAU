@@ -7,7 +7,7 @@
 #include "Class_Dense.hpp"
 #include <cmath>
 
-constexpr int N = 64;
+constexpr int N = 8;
 // получение корней полинома Чебывышева на [-1;1]
 const std::vector<double> chebyshev(){
     std::vector<double> x(N);
@@ -53,6 +53,49 @@ std::vector<double> MPI_Cheb(double L_min, double L_max, const CSR& MATRIX,
     return iterX;
 }
 
+//для самостоялки
+/*
+std::vector<double> MPI_ChebN(double L_min, double L_max, const CSR& MATRIX,
+                const std::vector<double>& B, const std::vector<double>& X, double eps){
+    const std::vector<double> Chebyshev = chebyshev();
+    constexpr std::array<int, N> Razbros = razbros();
+
+    double p = (L_min + L_max)/2; 
+    double q = (L_max - L_min)/2;
+    std::vector<double> as;
+    std::vector<double> iterX = X;
+    while(Norma(MATRIX*iterX - B) > eps)
+        for (int i = 0; i < N; ++i)
+        {
+            as.push_back(Norma(MATRIX*iterX - B));
+            iterX = iterX - 1/(p+q*Chebyshev[Razbros[i]]) * (MATRIX*iterX - B);
+    }
+    return as;
+}
+
+int MPI_ChebN2(double L_min, double L_max, const CSR& MATRIX,
+                const std::vector<double>& B, const std::vector<double>& X, double eps){
+    const std::vector<double> Chebyshev = chebyshev();
+    constexpr std::array<int, N> Razbros = razbros();
+    
+    double p = (L_min + L_max)/2; 
+    double q = (L_max - L_min)/2;
+    int as = 0;
+    std::vector<double> iterX = X;
+    while(Norma(MATRIX*iterX - B) > eps)
+        for (int i = 0; i < N; ++i)
+        {   
+            if (Norma(MATRIX*iterX - B) <= eps)
+                break;
+            as++;
+            iterX = iterX - 1/(p+q*Chebyshev[Razbros[i]]) * (MATRIX*iterX - B);
+    }
+    return as;
+}
+*/
+
+
+
 // метод Якоби
 std::vector<double> Yakobi(const CSR& MATRIX, const std::vector<double>& B, const std::vector<double>& X, int n){
     std::vector<double> iterX = X;
@@ -70,6 +113,26 @@ std::vector<double> MPI(const CSR& MATRIX, const std::vector<double>& B, const s
         iterX = iterX - (MATRIX*iterX - B)*t;
     return iterX;
 }
+
+
+// тестирование самостоялки
+/*
+std::vector<double> MPIn(const CSR& MATRIX, const std::vector<double>& B, const std::vector<double>& X, const double t, double eps){
+    std::vector<double> iterX = X;
+    std::vector<double> i;
+    
+    while (Norma(MATRIX*iterX - B) > eps)
+        {
+        i.push_back(Norma(MATRIX*iterX - B));
+        iterX = iterX - (MATRIX*iterX - B)*t;
+        }
+    return i;
+}
+*/
+
+
+
+
 
 std::vector<double> MPI(const Dense& MATRIX, const std::vector<double>& B, const std::vector<double>& X, const double t, double eps){
     std::vector<double> iterX = X;
@@ -197,7 +260,7 @@ std::vector<double> SOR(const Dense& MATRIX, const std::vector<double>& B, const
     return iterX;
 }
 
-std::vector<double> SG(const Dense& A, const std::vector<double>& B, const std::vector<double>& X, double eps){
+std::vector<double> CG(const Dense& A, const std::vector<double>& B, const std::vector<double>& X, double eps){
     std::vector<double> x = X;
     std::vector<double> r = A*X-B;
     std::vector<double> Rpred = r;
@@ -220,7 +283,7 @@ std::vector<double> SG(const Dense& A, const std::vector<double>& B, const std::
     return x;
 }
 
-std::vector<double> SG(const CSR& A, const std::vector<double>& B, const std::vector<double>& X, double eps){
+std::vector<double> CG(const CSR& A, const std::vector<double>& B, const std::vector<double>& X, double eps){
     std::vector<double> x = X;
     std::vector<double> r = A*X-B;
     std::vector<double> Rpred = r;
@@ -241,6 +304,36 @@ std::vector<double> SG(const CSR& A, const std::vector<double>& B, const std::ve
     }
     return x;
 }
+
+std::vector<double> CGn(const CSR& A, const std::vector<double>& B, const std::vector<double>& X, double eps){
+    std::vector<double> x = X;
+    std::vector<double> r = A*X-B;
+    std::vector<double> Rpred = r;
+    std::vector<double> d = r;
+    std::vector<double> i;
+
+
+    double alpha = (r*r)/(d*(A*d));
+    double beta = 0;
+    while(Norma(r) > eps){
+       i.push_back(Norma(r));
+        alpha = (r*r)/(d*(A*d));
+        x = x - alpha * d;
+        Rpred = r;
+        r = A*x - B;
+        if (Norma(d) == 0)
+            break;
+        else{
+            beta = (r*r)/(Rpred*Rpred); 
+            d = r + beta * d; 
+        }
+    }
+
+    return i;
+
+}
+
+
 
 
 
