@@ -54,48 +54,6 @@ std::vector<double> MPI_Cheb(double L_min, double L_max, const Matrix& A,
     return iterX;
 }
 
-//для самостоялки
-/*
-std::vector<double> MPI_ChebN(double L_min, double L_max, const CSR& MATRIX,
-                const std::vector<double>& B, const std::vector<double>& X, double eps){
-    const std::vector<double> Chebyshev = chebyshev();
-    constexpr std::array<int, N> Razbros = razbros();
-
-    double p = (L_min + L_max)/2; 
-    double q = (L_max - L_min)/2;
-    std::vector<double> as;
-    std::vector<double> iterX = X;
-    while(Norma(MATRIX*iterX - B) > eps)
-        for (int i = 0; i < N; ++i)
-        {
-            as.push_back(Norma(MATRIX*iterX - B));
-            iterX = iterX - 1/(p+q*Chebyshev[Razbros[i]]) * (MATRIX*iterX - B);
-    }
-    return as;
-}
-
-int MPI_ChebN2(double L_min, double L_max, const CSR& MATRIX,
-                const std::vector<double>& B, const std::vector<double>& X, double eps){
-    const std::vector<double> Chebyshev = chebyshev();
-    constexpr std::array<int, N> Razbros = razbros();
-    
-    double p = (L_min + L_max)/2; 
-    double q = (L_max - L_min)/2;
-    int as = 0;
-    std::vector<double> iterX = X;
-    while(Norma(MATRIX*iterX - B) > eps)
-        for (int i = 0; i < N; ++i)
-        {   
-            if (Norma(MATRIX*iterX - B) <= eps)
-                break;
-            as++;
-            iterX = iterX - 1/(p+q*Chebyshev[Razbros[i]]) * (MATRIX*iterX - B);
-    }
-    return as;
-}
-*/
-
-
 
 // метод Якоби
 std::vector<double> Yakobi(const CSR& A, const std::vector<double>& B, const std::vector<double>& X, int n){
@@ -115,22 +73,6 @@ std::vector<double> MPI(const Matrix& A, const std::vector<double>& B, const std
         iterX = iterX - (A*iterX - B)*t;
     return iterX;
 }
-
-
-// тестирование самостоялки
-/*
-std::vector<double> MPIn(const CSR& MATRIX, const std::vector<double>& B, const std::vector<double>& X, const double t, double eps){
-    std::vector<double> iterX = X;
-    std::vector<double> i;
-    
-    while (Norma(MATRIX*iterX - B) > eps)
-        {
-        i.push_back(Norma(MATRIX*iterX - B));
-        iterX = iterX - (MATRIX*iterX - B)*t;
-        }
-    return i;
-}
-*/
 
 
 // Гаусс Зейдель*************************************************************************************
@@ -212,65 +154,6 @@ std::vector<double> Gaus_SIM(const Matrix& A, const std::vector<double>& B, cons
 }
 
 
-
-
-// для самостоялки 
-/*
-template<typename Matrix>
-std::vector<double> Gaus_SIMn(const Matrix& A, const std::vector<double>& B, const std::vector<double>& X, double eps){
-    std::vector<double> iterX = X;
-    std::vector<double> kol;
-    while(Norma(A*iterX - B) > eps){
-        kol.push_back(Norma(A*iterX - B));
-        std::vector<double> y = iterX;
-        for(int k = 0; k < A.get_M(); ++k){
-            std::vector<double> Uk(A.get_N()); // N = M
-            std::vector<double> Lk(A.get_M());
-            for(int j = 0; j < k; ++j)
-                Lk[j] = A(k,j);
-            for(int j = k+1; j < Uk.size(); ++j)
-                Uk[j] = A(k,j);
-        
-            iterX[k] = (B[k]-Uk*y - Lk*iterX)/A(k,k);            
-        }
-
-        kol.push_back(Norma(A*iterX - B));
-        for(int k = A.get_M() - 1; k >= 0 ; --k){
-            std::vector<double> Uk(A.get_N()); // N = M
-            std::vector<double> Lk(A.get_M());
-            for(int j = 0; j < k; ++j)
-                Lk[j] = A(k,j);
-            for(int j = k+1; j < Uk.size(); ++j)
-                Uk[j] = A(k,j);
-
-            iterX[k] = (B[k]-Lk*y - Uk*iterX)/A(k,k);            
-        }
-    }
-
-    return kol;
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 template<typename Matrix>
 std::vector<double> SOR(const Matrix& A, const std::vector<double>& B, const std::vector<double>& X, double eps, double omega){
     std::vector<double> iterX = X;
@@ -317,39 +200,6 @@ std::vector<double> CG(const Matrix& A, const std::vector<double>& B, const std:
     }
     return x;
 }
-
-// для самостоялки
-/*
-std::vector<double> CGn(const CSR& A, const std::vector<double>& B, const std::vector<double>& X, double eps){
-    std::vector<double> x = X;
-    std::vector<double> r = A*X-B;
-    std::vector<double> Rpred = r;
-    std::vector<double> d = r;
-    std::vector<double> i;
-
-
-    double alpha = (r*r)/(d*(A*d));
-    double beta = 0;
-    while(Norma(r) > eps){
-       i.push_back(Norma(r));
-        alpha = (r*r)/(d*(A*d));
-        x = x - alpha * d;
-        Rpred = r;
-        r = A*x - B;
-        if (Norma(d) == 0)
-            break;
-        else{
-            beta = (r*r)/(Rpred*Rpred); 
-            d = r + beta * d; 
-        }
-    }
-
-    return i;
-
-}
-*/
-
-
 
 
 #endif // SLAE_ITR_HPP

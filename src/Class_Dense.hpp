@@ -17,7 +17,7 @@ public:
     }
     
     std::vector<double>  operator*(const std::vector<double>& h) const{
-        std::vector<double> newDense(N);
+        std::vector<double> newDense(M);
         for(int u = 0; u < M; ++u)
             for(int k = 0; k < N; ++k)
                 newDense[u] += data[u * N + k] * h[k];            
@@ -95,21 +95,3 @@ const Dense operator*(const Dense& x1, const Dense& x2){
 }
 
 #endif // SLAE_DENSE_HPP
-
-/*
-int main(){
-    std::vector<double> x = {1,2,3,4,5,6};
-    std::vector<double> y = {1,1,1,1,1,1};
-    Dense A(3,2,x);
-    Dense B(2,3,y);
-    Dense C = A *B;
-    for (int i = 0; i < C.get_M(); ++i)
-    {
-        for(int j = 0; j < C.get_N(); ++j)
-            std::cout << C(i,j) << " ";
-        std::cout << "\n";
-    }
-    return 0;
-
-}
-*/

@@ -5,7 +5,7 @@
 #include "Solver_Mat3Dig.hpp"
 #include "Solver_ITR.hpp"
 #include "alg.hpp"
-
+#include "GMRES.hpp"
 
 TEST(Class_Dense, UmnNaSkal) {
     std::vector<double> a = {1., 3., 6., 0.};
@@ -232,7 +232,7 @@ TEST(CSR, MetProstIter) {
     std::vector<double> x = {-25/24., 11/12., 53/24.};
     std::vector<double> x_ref = MPI(A, b, x0, 0.01, 1e-13);
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -248,7 +248,7 @@ TEST(CSR, MetProstIter_cheb ) {
     std::vector<double> x = {5/8., 37/24.};
     std::vector<double> x_ref = MPI_Cheb(6., 12., A, b, x0, 1e-25);
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-25);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-25);
     }
 }
 
@@ -263,7 +263,7 @@ TEST(CSR, Yakobi) {
     std::vector<double> x = {-25/24., 11/12., 53/24.};
     std::vector<double> x_ref = Yakobi(A, b, x0, 1000);
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-5);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-5);
     }
 }
 
@@ -278,7 +278,7 @@ TEST(CSR, Gauss_Seidel) {
     std::vector<double> x = {5/8., 37/24.};
     std::vector<double> x_ref = Gauss_Seidel(A, b, x0, 1e-13);
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -293,7 +293,7 @@ TEST(CSR, SOR) {
     std::vector<double> x = {5/8., 37/24.};
     std::vector<double> x_ref = SOR(A, b, x0, 1e-13, 0.5);
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -308,7 +308,7 @@ TEST(CSR, GausSIM) {
     std::vector<double> x = {5/8., 37/24.};
     std::vector<double> x_ref = Gaus_SIM(A, b, x0, 1e-13);
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -325,7 +325,7 @@ TEST(DENSE, MetProstIter) {
     std::vector<double> x_ref = MPI(A, b, x0, 0.01, 1e-13);
     
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -341,7 +341,7 @@ TEST(DENSE, Gauss_Seidel) {
     std::vector<double> x_ref = Gauss_Seidel(A, b, x0, 1e-13);
     
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-13);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-13);
     }
 }
 
@@ -357,7 +357,7 @@ TEST(DENSE, GausSIM) {
     std::vector<double> x_ref = Gaus_SIM(A, b, x0, 1e-15);
     
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-14);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-14);
     }
 }
 
@@ -373,7 +373,7 @@ TEST(DENSE, SOR) {
     std::vector<double> x_ref = SOR(A, b, x0, 1e-15, 0.5);
     
     for (std::size_t i = 0; i < 3; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-15);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-15);
     }
 }
 
@@ -389,7 +389,7 @@ TEST(DENSE, CG) {
     std::vector<double> x_ref = CG(A, b, x0,1e-15);
     
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-15);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-15);
     }
 }
 
@@ -405,7 +405,7 @@ TEST(CSR, CG) {
     std::vector<double> x_ref = CG(A, b, x0,1e-15);
     
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-15);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-15);
     }
 }
 
@@ -420,7 +420,7 @@ TEST(DENSE, Grad) {
     std::vector<double> x_ref = f_grad(A, b, x0,1e-24);
     
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-24);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-24);
     }
 }
 
@@ -436,93 +436,65 @@ TEST(CSR, Grad) {
     std::vector<double> x_ref = f_grad(A, b, x0,1e-25);
 
     for (std::size_t i = 0; i < 2; ++i) {
-        EXPECT_NEAR(x[i], x_ref[i], 1e-24);
+        ASSERT_NEAR(x[i], x_ref[i], 1e-24);
     }
 }
 
 
 
-// ДЛя тестирования самостоялки....
-/*
-
-#include <iostream>
-#include <fstream>
-
-TEST(CSR, MetProstIterSAM) {
-    int n = 289;
-    std::vector<int> col(n + 2*n-2 + 2 * (n-17));
-    std::vector<int> row(n+1); //
-    std::vector<double> v(n + 2*n-2 + 2 * (n-17)); //
-    std::vector<double> B(n);
-    double a = 12;
-    double b = 28;
-    int k = 0;
-    for(int i = 0; i < n; ++i){
-        B[i] = 1;
-        for(int j = 0; j < n; ++j){
-            if (i-17 == j){
-                v[k] = a; 
-                col[k] = j; 
-                ++k;
-                //std::cout << ".12.";
-            }
-            if (i-1 == j){
-                v[k] = a; 
-                col[k] = j; 
-                ++k;
-                //std::cout << ".12.";
-            }
-            if (i == j){
-                v[k] = 2*b; 
-                col[k] = j; 
-                ++k;
-                //std::cout << ".36.";
-            }
-            if (i+1 == j){
-                v[k] = a;
-                col[k] = j; 
-                ++k;
-                //std::cout << ".12.";
-            }
-            if (i+17 == j){
-                v[k] = a; 
-                col[k] = j; 
-                ++k;
-                //std::cout << ".12.";
-            }
-            //if (i+17 != j && i+1 != j && i != j && i-1 != j && i-17 != j)
-                //std::cout << ".0.";
-        }
-        row[i+1] = k;
-        //std::cout<< std::endl;
-    }
-    double l_max = (b+2*a*cos(M_PI/(n+1)))+(b+2*a*cos(M_PI/(n+1)));
-    double l_min = (b+2*a*cos(M_PI*n/(n+1)))+(b+2*a*cos(M_PI*n/(n+1)));
-    std::cout<< l_max << "  " << l_min << std::endl;
-    CSR A(n, n, col, row, v);
+TEST(DENSE, GMRES_1) {
+    std::vector<double> v = {10, 0, 0, 1, 2, 2, 1, 5, 5, 1, 3, 5, 1, 2, 4, 0};
+    std::vector<double> b = {1, 2, 3, 4};
     
-    std::vector<double> x0(n);
+    Dense A(4, 4, v);
+    std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
 
+    std::vector<double> x = gmres(A,b,x0,3,1e-12);
+
+    ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
+}
+
+TEST(DENSE, GMRES_2) {
+    std::vector<double> v = {10, 0, 0, 1, 2, 2, 1, 5, 5, 1, 3, 5, 1, 2, 4, 0};
+    std::vector<double> b = {1, 2, 3, 4};
     
+    Dense A(4, 4, v);
+    std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
 
+    std::vector<double> x = gmres(A,b,x0,2,1e-12);
+    
+    ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
+}
 
-    std::ofstream out;          // поток для записи
-    out.open("hello.txt");      // открываем файл для записи
+TEST(DENSE, GMRES_3) {
 
+    std::vector<double> v = {10, -2, 6, 3, 8, -1, 1, 2, 1};
+    std::vector<double> b = {1, 2, 3};
+    
+    Dense A(3, 3, v);
 
-    std::vector<double> z = Gaus_SIMn(A, B, x0, 1e-15);
-
-    for(int i = 0; i < z.size(); ++i){   
-        out  << z[i] << ", ";
+    std::vector<double> x0 = {0.456, 0.23, 120.};
+    std::vector<double> x = {-25/24., 11/12., 53/24.};
+    std::vector<double> x_ref = gmres(A, b, x0, 2, 1e-13);
+    
+    for (std::size_t i = 0; i < 3; ++i) {
+        ASSERT_NEAR(x[i], x_ref[i], 1e-13);
     }
-    std::cout<<std::endl;
+}
 
-    out.close(); 
+TEST(DENSE, GMRES_4) {
+    std::vector<double> v = {10, 0, 0, 1, 2, 2, 1, 5, 5, 1, 3, 5, 1, 2, 4, 0};
+    std::vector<double> b = {1, 2, 3, 4};
+    
+    Dense A(4, 4, v);
+    std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
+
+    std::vector<double> x = gmres(A,b,x0,4,1e-12);
+    
+    ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
+}
 
 
-
-}  
- */
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

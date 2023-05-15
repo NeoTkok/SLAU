@@ -64,4 +64,16 @@ double Norma(const std::vector<double>& x) {
     }
     return result;
 }
+
+
+double Norma_2(const std::vector<double>& x) {
+    double result = 0;
+    for (int i = 0; i < x.size(); ++i) 
+        result += x[i] * x[i];
+    return sqrt(result);
+}
+
+
+
+
 #endif 
