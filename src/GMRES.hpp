@@ -156,4 +156,5 @@ std::vector<double> gmres(const Dense& A, const std::vector<double>& b,
 
 
 
+
 #endif // SLAE_GMRES_HPP

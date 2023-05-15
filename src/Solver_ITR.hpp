@@ -177,29 +177,4 @@ std::vector<double> SOR(const Matrix& A, const std::vector<double>& B, const std
     return iterX;
 }
 
-template<typename Matrix>
-std::vector<double> CG(const Matrix& A, const std::vector<double>& B, const std::vector<double>& X, double eps){
-    std::vector<double> x = X;
-    std::vector<double> r = A*X-B;
-    std::vector<double> Rpred = r;
-    std::vector<double> d = r;
-    double alpha = (r*r)/(d*(A*d));
-    double beta = 0;
-    while(Norma(r) > eps)
-    for (int i = 0; i < B.size()/* i < A.get_M*/; ++i){
-        alpha = (r*r)/(d*(A*d));
-        x = x - alpha * d;
-        Rpred = r;
-        r = A*x - B;
-        if (Norma(d) == 0)
-            break;
-        else{
-            beta = (r*r)/(Rpred*Rpred); 
-            d = r + beta * d; 
-        }
-    }
-    return x;
-}
-
-
 #endif // SLAE_ITR_HPP

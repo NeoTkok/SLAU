@@ -24,6 +24,14 @@ public:
         return newDense;
     }
 
+    Dense T() const{
+        Dense A(N,M);
+        for (int i = 0; i < N; ++i)
+            for (int j = 0; j < M; ++j)
+                A.edit(i,j,data[j * N + i]);
+        return A;
+    }
+
     int get_M() const{
         return M;
     }

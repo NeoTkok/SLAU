@@ -6,6 +6,7 @@
 #include "Solver_ITR.hpp"
 #include "alg.hpp"
 #include "GMRES.hpp"
+#include "Projection.hpp"
 
 TEST(Class_Dense, UmnNaSkal) {
     std::vector<double> a = {1., 3., 6., 0.};
@@ -489,7 +490,19 @@ TEST(DENSE, GMRES_4) {
     Dense A(4, 4, v);
     std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
 
-    std::vector<double> x = gmres(A,b,x0,4,1e-12);
+    std::vector<double> x = gmres(A,b,x0,2,1e-12);
+    
+    ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
+}
+
+TEST(DENSE, BiCG) {
+    std::vector<double> v = {10, 0, 0, 1, 2, 2, 1, 5, 5, 1, 3, 5, 1, 2, 4, 0};
+    std::vector<double> b = {1, 2, 3, 4};
+    
+    Dense A(4, 4, v);
+    std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
+
+    std::vector<double> x = BiCG(A,b,x0,1e-12);
     
     ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
 }
