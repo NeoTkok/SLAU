@@ -63,11 +63,42 @@ std::vector<double> BiCG(const Dense& A, const std::vector<double>& B,
         iterX = iterX - q * p;
         r  = r - q * z;
         r_ = r_ - q * z_;  
-        
+
         ro = ro_new;
     }
     
     return iterX;
 }
+
+
+std::vector<double> BiCG_Stab(const Dense& A, const std::vector<double>& B,
+                        const std::vector<double>& X, const double eps)
+{
+    std::vector<double> r = A*X - B;
+    std::vector<double> r_ = r;
+    double ro = 1;
+    double alpha = 1;
+    double omega = 1;
+    std::vector<double> v(r.size());
+    std::vector<double> p(r.size());
+    std::vector<double> iterX = X;
+    while(Norma_2(r) > eps){
+        double ro_new = r_ * r;
+        double beta = ro_new / ro * alpha /omega;
+        p = r + beta * (p - omega * v);
+        v = A * p;
+        alpha = ro_new / (r_* v);
+        std::vector<double> s = r - alpha * v;
+        std::vector<double> t = A * s;
+        omega = (t*s)/(t*t);
+        iterX = iterX - omega * s - alpha * p;
+        r = s - omega * t;
+        ro = ro_new;
+    }
+
+    return iterX;
+}
+
+
 
 #endif 

@@ -495,7 +495,7 @@ TEST(DENSE, GMRES_4) {
     ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
 }
 
-TEST(DENSE, BiCG) {
+TEST(DENSE, BiCG_1) {
     std::vector<double> v = {10, 0, 0, 1, 2, 2, 1, 5, 5, 1, 3, 5, 1, 2, 4, 0};
     std::vector<double> b = {1, 2, 3, 4};
     
@@ -503,10 +503,40 @@ TEST(DENSE, BiCG) {
     std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
 
     std::vector<double> x = BiCG(A,b,x0,1e-12);
-    
     ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
 }
 
+TEST(DENSE, BiCG_2) {
+    std::vector<double> v = {12, 0, 0, 1, 2, 2, 1, 5, 5, 1, 3, 5, 1, 2, 4, 0};
+    std::vector<double> b = {1, 0.1232, 45, 4};
+    
+    Dense A(4, 4, v);
+    std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
+
+    std::vector<double> x = BiCG(A,b,x0,1e-12);
+    ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
+}
+
+TEST(DENSE, BiCG_Stab_1) {
+    std::vector<double> v = {10, 0, 5, 1, 123, 2, 1, 5, 5, 1, 3, 5, 1, 2, 4, 0};
+    std::vector<double> b = {1, 23, 3, 400.};
+    
+    Dense A(4, 4, v);
+    std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
+
+    std::vector<double> x = BiCG_Stab(A,b,x0,1e-12);
+    ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
+}
+
+TEST(DENSE, BiCG_Stab_2) {
+    std::vector<double> v = {10, 0, 0, 1, 2, 2, 1, 5, 5, 1, 3, 5, 1, 2, 4, 0};
+    std::vector<double> b = {1, 2, 3, 4};
+    
+    Dense A(4, 4, v);
+    std::vector<double> x0 = {0.1, 0.2, 0.5, 0.1};
+    std::vector<double> x = BiCG_Stab(A,b,x0,1e-12);
+    ASSERT_NEAR(Norma_2(A*x-b), 0, 1e-11);
+}
 
 
 int main(int argc, char** argv) {
